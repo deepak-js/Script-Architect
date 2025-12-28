@@ -6,8 +6,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const axios = require('axios');
 
-const META_PIXEL_ID = 'YOUR_PIXEL_ID'; // Replace with your Pixel ID
-const META_ACCESS_TOKEN = 'YOUR_ACCESS_TOKEN'; // Replace with your Access Token
+const META_PIXEL_ID = '4489905394629023'; // Replace with your Pixel ID
+const META_ACCESS_TOKEN = 'EAAWkmWMLXRkBQSaO4e13fvJISFASfs5FRg6uMYsADA5eV0RRE4OEsEjDlG5iRhJlW8vfM3XzCGKyVwhwveZBZCYlv6e2H06aIRVtIZCwsXpjVUI0ZAW3h4zCkEhOmyVkWZCihWj4A0nNNCNLpRH2FOQ30r5IbXhHatOIyDk1pkXdaXLIOKnojsN6GEunOFX5gMAZDZD'; // Replace with your Access Token
 
 // Hash helper for Meta CAPI (SHA-256)
 function hashData(data) {
