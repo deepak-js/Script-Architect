@@ -4,6 +4,54 @@ const crypto = require('crypto');
 const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
+const axios = require('axios');
+
+const META_PIXEL_ID = 'YOUR_PIXEL_ID'; // Replace with your Pixel ID
+const META_ACCESS_TOKEN = 'YOUR_ACCESS_TOKEN'; // Replace with your Access Token
+
+// Hash helper for Meta CAPI (SHA-256)
+function hashData(data) {
+    return crypto.createHash('sha256').update(data).digest('hex');
+}
+
+// Send Event to Meta Conversions API
+async function sendMetaEvent(customer, orderId, paymentId) {
+    if (META_PIXEL_ID === 'YOUR_PIXEL_ID' || META_ACCESS_TOKEN === 'YOUR_ACCESS_TOKEN') {
+        console.log('Skipping Meta Event: Pixel ID or Access Token not set.');
+        return;
+    }
+
+    try {
+        const eventData = {
+            data: [
+                {
+                    event_name: 'Purchase',
+                    event_time: Math.floor(Date.now() / 1000),
+                    action_source: 'website',
+                    user_data: {
+                        em: [hashData(customer.email.toLowerCase())],
+                        fn: [hashData(customer.name.toLowerCase())]
+                    },
+                    custom_data: {
+                        currency: 'INR',
+                        value: 999,
+                        order_id: orderId,
+                        transaction_id: paymentId
+                    }
+                }
+            ],
+            access_token: META_ACCESS_TOKEN
+        };
+
+        await axios.post(
+            `https://graph.facebook.com/v17.0/${META_PIXEL_ID}/events`,
+            eventData
+        );
+        console.log('Meta Purchase Event sent successfully');
+    } catch (error) {
+        console.error('Failed to send Meta Event:', error.response?.data || error.message);
+    }
+}
 
 const app = express();
 app.use(cors());
@@ -159,7 +207,11 @@ app.post('/api/webhook', async (req, res) => {
                     customers[customerIndex].status = 'paid';
                     customers[customerIndex].paymentId = payment.id;
                     customers[customerIndex].paidAt = new Date().toISOString();
+                    customers[customerIndex].paidAt = new Date().toISOString();
                     await writeCustomers(customers);
+
+                    // Send Purchase Event to Meta
+                    await sendMetaEvent(customers[customerIndex], orderId, payment.id);
                 }
             }
 
