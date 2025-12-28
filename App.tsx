@@ -18,7 +18,47 @@ import {
   SparklesIcon
 } from 'lucide-react';
 
+// Thank You Page Component
+const ThankYouPage: React.FC = () => (
+  <div className="min-h-screen bg-[#FDFDFD] flex items-center justify-center p-6 text-center">
+    <div className="max-w-md w-full animate-fade-in">
+      <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce-slow border border-emerald-100">
+        <SparklesIcon className="w-10 h-10 text-emerald-500" />
+      </div>
+      <h1 className="text-4xl font-black tracking-tighter mb-6 text-slate-900 font-serif italic">
+        You're in.
+      </h1>
+      <p className="text-lg text-slate-600 mb-10 leading-relaxed font-medium">
+        Thank you for the payment. <br />You'll receive all the details within 24 hours to your mail.
+      </p>
+      <a
+        href="/"
+        className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-800 transition-all hover:scale-105"
+      >
+        <span>Back to Home</span>
+        <ArrowRightIcon className="w-4 h-4" />
+      </a>
+      <div className="mt-12 text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase opacity-50">
+        Script Architect
+      </div>
+    </div>
+  </div>
+);
+
 const App: React.FC = () => {
+  // Simple check for routing
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  React.useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  if (currentPath === '/thank-you' || currentPath === '/thank-you/') {
+    return <ThankYouPage />;
+  }
+
   // Razorpay Payment Button Component
   const RazorpayButton = () => {
     const formRef = React.useRef<HTMLFormElement>(null);
